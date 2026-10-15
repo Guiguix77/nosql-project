@@ -1,0 +1,9 @@
+{
+    "name": "acme/task-api",
+    "require": {
+        "php": ">=8.2",
+        "ext-pdo_pgsql": "*",
+        "ext-redis": "*"
+    },
+    "autoload": { "psr-4": { "App\\": "../src/" } }
+}
