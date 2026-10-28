@@ -1,22 +1,25 @@
 services:
   db:
     image: postgres:16-alpine
+    container_name: lego_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:-legouser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-legopass}
+      POSTGRES_DB: ${POSTGRES_DB:-legodb}
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d:ro
+      - ./src/public/src/csv:/csv:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-legouser} -d ${POSTGRES_DB:-legodb}"]
       interval: 5s
       retries: 10
     networks: [app]
 
   redis:
     image: redis:7-alpine
+    container_name: lego_redis
     restart: unless-stopped
     command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     volumes:
@@ -30,12 +33,15 @@ services:
   app:
     build:
       context: ./src
-      dockerfile: Dockerfile
+      dockerfile: DOCKERFILE
+    container_name: lego_app
     restart: unless-stopped
+    volumes:
+      - ./src:/var/www/html
     environment:
-      PG_DSN: "pgsql:host=db;port=5432;dbname=${POSTGRES_DB}"
-      PG_USER: ${POSTGRES_USER}
-      PG_PASS: ${POSTGRES_PASSWORD}
+      PG_DSN: "pgsql:host=db;port=5432;dbname=${POSTGRES_DB:-legodb}"
+      PG_USER: ${POSTGRES_USER:-legouser}
+      PG_PASS: ${POSTGRES_PASSWORD:-legopass}
       REDIS_HOST: redis
       REDIS_PORT: 6379
     depends_on:
@@ -46,16 +52,22 @@ services:
     networks: [app]
 
   nginx:
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: DOCKERFILE
+    container_name: lego_nginx
     restart: unless-stopped
     ports:
       - "8080:80"
+    volumes:
+      - ./src:/var/www/html:ro
     depends_on:
       - app
     networks: [app]
 
   adminer:
     image: adminer:latest
+    container_name: lego_adminer
     environment:
       ADMINER_DEFAULT_SERVER: db
     ports:

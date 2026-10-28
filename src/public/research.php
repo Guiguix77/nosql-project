@@ -1,6 +1,12 @@
 <?php
-require __DIR__ . '/src/db/db.php';
-$pdo = db();
+declare(strict_types=1);
+session_start();
+
+// Connexion centralisée PostgreSQL + Redis
+require_once __DIR__ . '/../connection.php';
+$conn  = Connection::get();
+$pdo   = $conn->pg();
+$redis = $conn->cache();
 
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 
@@ -53,10 +59,18 @@ if ($set_num !== '') {
   $stmt->execute([':sn'=>$set_num]);
   $row = $stmt->fetch();
 
-  // commentaires
-  $comments = $pdo->prepare("SELECT id, comment, created_at FROM set_comments WHERE set_num=:sn ORDER BY id DESC");
-  $comments->execute([':sn'=>$set_num]);
-  $commentsRows = $comments->fetchAll();
+  // Récupération des commentaires : On regarde d'abord dans le cache Redis, sinon dans PostgreSQL
+  $cacheKey = "lego:comments:set:{$set_num}";
+  $cachedComments = $redis->get($cacheKey);
+  
+  if ($cachedComments !== false) {
+      $commentsRows = json_decode($cachedComments, true);
+  } else {
+      $comments = $pdo->prepare("SELECT id, comment, created_at FROM set_comments WHERE set_num=:sn ORDER BY id DESC");
+      $comments->execute([':sn'=>$set_num]);
+      $commentsRows = $comments->fetchAll();
+      $redis->setex($cacheKey, 60, json_encode($commentsRows)); // Cache 60 secondes
+  }
 
   $backHref = $ret !== '' ? ('research.php?'.$ret) : 'index.php';
   ?>
@@ -126,16 +140,17 @@ $where=''; $params=[]; $themeLabel='';
 if ($theme_id !== '') {
   $where='WHERE s.theme_id = :tid'; $params[':tid']=(int)$theme_id;
 
+  // Correction PostgreSQL : string_agg au lieu de GROUP_CONCAT
   $t=$pdo->prepare("WITH RECURSIVE p(id,name,parent_id,depth) AS (
       SELECT id,name,parent_id,0 FROM themes WHERE id=:id
       UNION ALL SELECT t.id,t.name,t.parent_id, p.depth+1 FROM themes t JOIN p ON t.id=p.parent_id
     )
-    SELECT GROUP_CONCAT(name,' › ') FROM (SELECT name FROM p ORDER BY depth DESC)");
+    SELECT string_agg(name, ' › ') FROM (SELECT name FROM p ORDER BY depth DESC) x");
   $t->execute([':id'=>(int)$theme_id]);
   $themeLabel = (string)$t->fetchColumn() ?: ('ID '.(int)$theme_id);
 
 } elseif ($theme_name !== '') {
-  $where='WHERE t.name LIKE :tname'; $params[':tname']='%'.$theme_name.'%';
+  $where='WHERE t.name ILIKE :tname'; $params[':tname']='%'.$theme_name.'%'; // ILIKE pour la casse insensible en PG
   $themeLabel = $theme_name;
 } else {
   header('Location: index.php'); exit;

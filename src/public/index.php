@@ -1,13 +1,29 @@
 <?php
-// MINIMAL PHP (5 lignes)
-require __DIR__ . '/src/db/db.php';
-$pdo = db();
-$themes = $pdo->query("
-  SELECT c.id, c.name AS child_name, p.name AS parent_name
-  FROM themes c
-  LEFT JOIN themes p ON p.id = c.parent_id
-  ORDER BY COALESCE(p.name,'' ) COLLATE NOCASE, c.name COLLATE NOCASE
-")->fetchAll();
+declare(strict_types=1);
+session_start();
+
+require_once __DIR__ . '/../connection.php';
+$conn  = Connection::get();
+$pdo   = $conn->pg();
+$redis = $conn->cache();
+
+// On cherche d'abord la liste des thèmes dans Redis, sinon dans PostgreSQL
+$cachedThemes = $redis->get('lego:themes:all');
+if ($cachedThemes !== false) {
+    $themes = json_decode($cachedThemes, true);
+} else {
+    $themes = $pdo->query("
+      SELECT c.id, c.name AS child_name, p.name AS parent_name
+      FROM themes c
+      LEFT JOIN themes p ON p.id = c.parent_id
+      ORDER BY LOWER(COALESCE(p.name, '')), LOWER(c.name)
+    ")->fetchAll();
+    $redis->setex('lego:themes:all', 3600, json_encode($themes));
+}
+
+// Récupération des derniers commentaires depuis Redis pour les afficher en page d'accueil
+$recentCommentsRaw = $redis->lRange('lego:comments:recent', 0, 4);
+$recentComments = array_map(fn($item) => json_decode($item, true), $recentCommentsRaw ?: []);
 ?>
 <!DOCTYPE html>
 <html lang="fr">

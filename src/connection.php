@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 final class Connection
 {
+    private static ?Connection $instance = null;
     private PDO $pdo;
     private Redis $redis;
 
@@ -19,7 +20,16 @@ final class Connection
             ]
         );
         $this->redis = new Redis();
-        $this->redis->pconnect($config['redis']['host'], $config['redis']['port']);
+        $this->redis->pconnect($config['redis']['host'], (int)$config['redis']['port']);
+    }
+
+    public static function get(): self
+    {
+        if (self::$instance === null) {
+            $config = require __DIR__ . '/config.php';
+            self::$instance = new self($config);
+        }
+        return self::$instance;
     }
 
     public function pg(): PDO       { return $this->pdo; }
