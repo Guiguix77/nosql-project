@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS set_comments (
     REFERENCES sets(set_num)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
+  username   TEXT NOT NULL DEFAULT 'Anonyme',
   comment    TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,10 +1,16 @@
+<?php
+declare(strict_types=1);
+session_start();
+
+function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FindBrick</title>
+  <title>FindBrick - Crédits</title>
   <link rel="stylesheet" href="src/css/style.css">
   <script src="src/js/script.js" defer></script>
 </head>
@@ -19,7 +25,9 @@
       <div class="nav-right">
         <a id="nav-home" href="index.php">Accueil</a>
         <span class="sep">|</span>
-        <a id="nav-credits" href="credits.html">Crédits</a>
+        <a href="account.php"><?= isset($_SESSION['username']) ? '👤 ' . h($_SESSION['username']) : 'Mon Compte' ?></a>
+        <span class="sep">|</span>
+        <a id="nav-credits" href="credits.php">Crédits</a>
         <div class="buttons">
           <button id="toggle-language" type="button">English</button>
           <button id="toggle-theme" type="button" aria-label="Toggle theme">🌞/🌙</button>
@@ -33,8 +41,8 @@
       <h2 id="credits-title"><u>Crédits</u></h2>
 
       <h3 id="credits-project-title">Projet</h3>
-      <p id="credits-project-text">FindBrick — est un site réalisé dans le cadre du projet BAWE 2025. Objectif :
-        rechercher et afficher des sets LEGO par numéro et par thème.</p>
+      <p id="credits-project-text">FindBrick — est un site réalisé dans le cadre du projet NoSQL / BAWE. Objectif :
+        rechercher et afficher des sets LEGO avec persistance hybride (PostgreSQL & Redis).</p>
       <br>
 
       <h3 id="credits-team-title">Équipe</h3>
@@ -57,7 +65,7 @@
       <br>
 
       <h3 id="credits-tech-title">Technologies</h3>
-      <p id="credits-tech-text">PHP · SQLite · HTML/CSS · JavaScript (traduction FR/EN, thème clair/sombre).</p>
+      <p id="credits-tech-text">PHP · PostgreSQL · Redis · Docker · HTML/CSS · JavaScript.</p>
       <br>
 
       <h3 id="credits-contact-title">Contact</h3>
@@ -65,7 +73,6 @@
             href="mailto:guillaume.merieux@ensiie.eu">guillaume.merieux@ensiie.eu</a></em></p>
     </section>
   </main>
-
 
   <footer>
     <p id="footer-text">Crédits : FindBrick ©2025</p>

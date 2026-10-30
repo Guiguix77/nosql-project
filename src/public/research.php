@@ -40,6 +40,8 @@ $title = 'FindBrick';
     <div class="nav-right">
       <a id="nav-home" href="index.php">Accueil</a>
       <span class="sep">|</span>
+      <a href="account.php"><?= isset($_SESSION['username']) ? '👤 ' . htmlspecialchars($_SESSION['username']) : 'Mon Compte' ?></a>
+      <span class="sep">|</span>
       <a id="nav-credits" href="credits.html">Crédits</a>
       <div class="buttons">
         <button id="toggle-language" type="button">English</button>
@@ -66,7 +68,7 @@ if ($set_num !== '') {
   if ($cachedComments !== false) {
       $commentsRows = json_decode($cachedComments, true);
   } else {
-      $comments = $pdo->prepare("SELECT id, comment, created_at FROM set_comments WHERE set_num=:sn ORDER BY id DESC");
+      $comments = $pdo->prepare("SELECT id, username, comment, created_at FROM set_comments WHERE set_num=:sn ORDER BY id DESC");
       $comments->execute([':sn'=>$set_num]);
       $commentsRows = $comments->fetchAll();
       $redis->setex($cacheKey, 60, json_encode($commentsRows)); // Cache 60 secondes
@@ -110,7 +112,7 @@ if ($set_num !== '') {
           <ul class="comments-list" id="comments-list">
             <?php foreach ($commentsRows as $n): ?>
               <li class="comment-item">
-                <div class="comment-text"><?= h($n['comment']) ?></div>
+                <div class="comment-text"><strong><?= h($n['username'] ?? 'Anonyme') ?> :</strong> <?= h($n['comment']) ?></div>
                 <div class="comment-meta"><?= h($n['created_at']) ?></div>
                 <form action="comment.php" method="post" class="comment-actions">
                   <input type="hidden" name="id" value="<?= (int)$n['id'] ?>">

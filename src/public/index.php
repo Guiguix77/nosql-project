@@ -44,7 +44,9 @@ $recentComments = array_map(fn($item) => json_decode($item, true), $recentCommen
         <div class="nav-right">
           <a id="nav-home" href="index.php">Accueil</a>
           <span class="sep">|</span>
-          <a id="nav-credits" href="credits.html">Crédits</a>
+          <a href="account.php"><?= isset($_SESSION['username']) ? '👤 ' . htmlspecialchars($_SESSION['username']) : 'Mon Compte' ?></a>
+          <span class="sep">|</span>
+          <a id="nav-credits" href="credits.php">Crédits</a>
           <div class="buttons">
             <button id="toggle-language" type="button">English</button>
             <button id="toggle-theme" type="button" aria-label="Toggle theme">🌞/🌙</button>
