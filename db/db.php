@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 function db(): PDO {
     static $pdo = null;
-    if ($pdo instanceof PDO) return $pdo;
-
+    if ($pdo instanceof PDO) {
+        return $pdo;
+    }
+    
     $dbPath = __DIR__ . '/sets.db';
     if (!is_readable($dbPath)) {
         http_response_code(500);

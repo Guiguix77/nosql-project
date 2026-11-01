@@ -104,7 +104,7 @@ if ($set_num !== '') {
           <label for="comment_text" id="label-comment">Ajouter un commentaire :</label>
           <input type="hidden" name="set_num" value="<?= h($row['set_num']) ?>">
           <input type="hidden" name="ret" value="<?= h($ret) ?>">
-          <input type="text" id="comment_text" name="comment" required placeholder="ex: Acheté en 2025, pièces manquantes...">
+          <input type="text" id="comment_text" name="comment" required placeholder="ex: Acheté en 2026, pièces manquantes...">
           <button id="btn-add-comment" type="submit" name="action" value="add">Ajouter</button>
         </form>
 
@@ -133,7 +133,7 @@ if ($set_num !== '') {
     <?php endif; ?>
   </section>
   <?php
-  echo '</main><footer><p id="footer-text">Crédits : FindBrick ©2025</p></footer></body></html>';
+  echo '</main><footer><p id="footer-text">Crédits : FindBrick ©2026</p></footer></body></html>';
   exit;
 }
 
@@ -231,7 +231,7 @@ $retQuery = http_build_query($_GET);
 </main>
 
 <footer>
-  <p id="footer-text">Crédits : FindBrick ©2025</p>
+  <p id="footer-text">Crédits : FindBrick ©2026</p>
 </footer>
 </body>
 </html>

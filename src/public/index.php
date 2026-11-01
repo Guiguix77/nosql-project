@@ -7,6 +7,8 @@ $conn  = Connection::get();
 $pdo   = $conn->pg();
 $redis = $conn->cache();
 
+$currentPage = 'home';
+
 // On cherche d'abord la liste des thèmes dans Redis, sinon dans PostgreSQL
 $cachedThemes = $redis->get('lego:themes:all');
 if ($cachedThemes !== false) {
@@ -24,6 +26,8 @@ if ($cachedThemes !== false) {
 // Récupération des derniers commentaires depuis Redis pour les afficher en page d'accueil
 $recentCommentsRaw = $redis->lRange('lego:comments:recent', 0, 4);
 $recentComments = array_map(fn($item) => json_decode($item, true), $recentCommentsRaw ?: []);
+
+function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -42,9 +46,9 @@ $recentComments = array_map(fn($item) => json_decode($item, true), $recentCommen
           <h1 id="site-title">Bienvenue sur FindBrick</h1>
         </div>
         <div class="nav-right">
-          <a id="nav-home" href="index.php">Accueil</a>
+          <a id="nav-home" href="index.php"><strong>Accueil</strong></a>
           <span class="sep">|</span>
-          <a href="account.php"><?= isset($_SESSION['username']) ? '👤 ' . htmlspecialchars($_SESSION['username']) : 'Mon Compte' ?></a>
+          <a href="account.php"><?= isset($_SESSION['username']) ? '👤 ' . h($_SESSION['username']) : 'Mon Compte' ?></a>
           <span class="sep">|</span>
           <a id="nav-credits" href="credits.php">Crédits</a>
           <div class="buttons">
@@ -58,7 +62,7 @@ $recentComments = array_map(fn($item) => json_decode($item, true), $recentCommen
     <main class="container">
       <section class="hero">
         <img src="src/img/lego.jpg" alt="Une image de LEGO" class="hero-img">
-        <p id="content">Ce site web est réalisé dans le cadre du projet BAWE 2025.</p>
+        <p id="content">Ce site web est réalisé dans le cadre du projet BAWE 2026.</p>
         <br>
       </section>
 
@@ -92,7 +96,7 @@ $recentComments = array_map(fn($item) => json_decode($item, true), $recentCommen
     </main>
 
     <footer>
-      <p id="footer-text">Crédits : FindBrick ©2025</p>
+      <p id="footer-text">Crédits : FindBrick ©2026</p>
     </footer>
   </body>
 </html>

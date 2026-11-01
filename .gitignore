@@ -1,1 +1,91 @@
 .env
+.env.local
+.env.*.local
+.env.prod
+.env.staging
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Backups
+backups/
+*.sql
+*.sql.gz
+*.rdb
+*.bak
+*.backup
+
+# Docker
+.docker/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Cache
+.cache/
+*.cache
+
+# Composer
+vendor/
+composer.lock
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# Build artifacts
+dist/
+build/
+*.min.js
+*.min.css
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Testing
+.coverage
+.phpunit.result.cache
+.phpunit.cache
+
+# Local history
+.history/
+
+# Database files
+*.db
+*.sqlite
+
+# Docker Compose override files (contiennent des secrets)
+docker-compose.override.yml
+*.override.yml
+
+# Scripts de backup
+scripts/backups/
+
+# Fichiers de configuration locaux
+*.local

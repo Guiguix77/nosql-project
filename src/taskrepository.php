@@ -8,7 +8,7 @@ final class TaskRepository
 
     public function __construct(private Connection $conn) {}
 
-    /** READ → Redis first, PG only as fallback (cache miss). */
+    /** READ → Redis first */
     public function all(): array
     {
         $redis = $this->conn->cache();
@@ -45,7 +45,7 @@ final class TaskRepository
         return $row ?: null;
     }
 
-    /** WRITE → PostgreSQL, then invalidate/update Redis. */
+    /* WRITE → PostgreSQL */
     public function create(string $title): array
     {
         $stmt = $this->conn->pg()->prepare('INSERT INTO tasks (title) VALUES (?) RETURNING *');
@@ -65,11 +65,10 @@ final class TaskRepository
         return $stmt->rowCount() > 0;
     }
 
-    /** Cache invalidation: delete precise key + the list, or update in place. */
     private function invalidate(int $id): void
     {
         $redis = $this->conn->cache();
         $redis->del("task:{$id}");
-        $redis->del(self::LIST_KEY);   // list cache rebuilds on next read
+        $redis->del(self::LIST_KEY);  
     }
 }

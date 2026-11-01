@@ -1,7 +1,5 @@
 <?php
 
-
-
 $db = __DIR__ . '/sets.db';
 $pdo = new PDO('sqlite:' . $db);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -17,7 +15,9 @@ if (($f = fopen(__DIR__ . '/../csv/themes.csv', 'r')) !== false) {
                        VALUES(?,?,?)
                        ON CONFLICT(id) DO UPDATE SET name=excluded.name,parent_id=excluded.parent_id");
   while ($r = fgetcsv($f)) {
-    if (!$r || $r[0]==='') continue;
+    if (!$r || $r[0]==='') {
+      continue;
+    }
     $st->execute([(int)$r[0], trim($r[1]??''), ($r[2]===''?null:(int)$r[2])]);
   }
   fclose($f);

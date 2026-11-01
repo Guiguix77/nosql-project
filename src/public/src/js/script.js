@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
       "site-title": { fr: "Bienvenue sur FindBrick", en: "Welcome to FindBrick" },
       "nav-home": { fr: "Accueil", en: "Home" },
       "nav-credits": { fr: "Crédits", en: "Credits" },
-      "footer-text": { fr: "Crédits : FindBrick ©2025", en: "Credits: FindBrick ©2025" },
-      "content": { fr: "Ce site web est réalisé dans le cadre du projet BAWE 2025.", en: "This website is made as part of the BAWE 2025 project." },
+      "footer-text": { fr: "Crédits : FindBrick ©2026", en: "Credits: FindBrick ©2026" },
+      "content": { fr: "Ce site web est réalisé dans le cadre du projet BAWE 2026.", en: "This website is made as part of the BAWE 2026 project." },
 
       // Index: recherche
       "search-set-title": { fr: "Recherche par numéro de set", en: "Search by set number" },
@@ -55,11 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
       "credits-title": { fr: "Crédits", en: "Credits" },
       "credits-project-title": { fr: "Projet", en: "Project" },
       "credits-project-text": {
-        fr: "FindBrick — est un site réalisé dans le cadre du projet BAWE 2025. Objectif : rechercher et afficher des sets LEGO par numéro et par thème.",
-        en: "FindBrick — website built for the BAWE 2025 project. Goal: search and display LEGO sets by number and theme."
+        fr: "FindBrick — est un site réalisé dans le cadre du projet NoSQL / BAWE. Objectif : rechercher et afficher des sets LEGO avec persistance hybride (PostgreSQL & Redis).",
+        en: "FindBrick — website built for the NoSQL / BAWE project. Goal: search and display LEGO sets with hybrid persistence (PostgreSQL & Redis)."
       },
       "credits-team-title": { fr: "Équipe", en: "Team" },
-      "credits-team-text": { fr: "Réalisation : Guillaume MÉRIEUX", en: "Built by: Guillaume MÉRIEUX" },
+      "credits-team-text": { fr: "Réalisation : Guillaume MÉRIEUX, Gael LEFEBVRE", en: "Built by: Guillaume MÉRIEUX, Gael LEFEBVRE" },
       "credits-data-title": { fr: "Données & images", en: "Data & Images" },
       "credits-data-text-1": {
         fr: 'Les informations de sets et certaines vignettes proviennent du site <a href="https://rebrickable.com/downloads/" target="_blank">Rebrickable</a>.',
@@ -74,9 +74,14 @@ document.addEventListener("DOMContentLoaded", () => {
         en: 'Visuals used on this site come from third-party sources and remain the property of their respective owners.'
       },
       "credits-tech-title": { fr: "Technologies", en: "Technologies" },
-      "credits-tech-text": { fr: "PHP · SQLite · HTML/CSS · JavaScript (traduction FR/EN, thème clair/sombre).", en: "PHP · SQLite · HTML/CSS · JavaScript (FR/EN toggle, light/dark theme)." },
+      "credits-tech-text": { fr: "PHP · PostgreSQL · Redis · Docker · HTML/CSS · JavaScript.", en: "PHP · PostgreSQL · Redis · Docker · HTML/CSS · JavaScript." },
       "credits-contact-title": { fr: "Contact", en: "Contact" },
-      "credits-contact-text": { fr: "Contact : guillaume.merieux@ensiie.eu", en: "Contact: guillaume.merieux@ensiie.eu" }
+      "credits-contact-text": { fr: "Contact : guillaume.merieux@ensiie.eu", en: "Contact: guillaume.merieux@ensiie.eu" },
+      
+      // Account preferences
+      "preferences-title": { fr: "Préférences", en: "Preferences" },
+      "pref-lang-label": { fr: "Langue :", en: "Language:" },
+      "pref-theme-label": { fr: "Thème :", en: "Theme:" }
     },
     classes: {
       "i18n-lbl-set": { fr: "Set :", en: "Set:" },
@@ -93,11 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
     placeholders: {
       "theme_name": { fr: "Recherche texte (partielle)", en: "Text search (partial)" },
       "comment_text": {
-        fr: "ex: Acheté en 2025, pièces manquantes...",
-        en: "ex: Bought in 2025, missing pieces..."
+        fr: "ex: Acheté en 2026, pièces manquantes...",
+        en: "ex: Bought in 2026, missing pieces..."
       }
-
-
     }
   };
 

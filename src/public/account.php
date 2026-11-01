@@ -95,6 +95,10 @@ $redisProfile = isset($_SESSION['username']) ? $redis->hGetAll("lego:user:" . $_
       <a href="account.php"><strong><?= isset($_SESSION['username']) ? '👤 ' . h($_SESSION['username']) : 'Mon Compte' ?></strong></a>
       <span class="sep">|</span>
       <a id="nav-credits" href="credits.php">Crédits</a>
+      <div class="buttons">
+        <button id="toggle-language" type="button">English</button>
+        <button id="toggle-theme" type="button" aria-label="Toggle theme">🌞/🌙</button>
+      </div>
     </div>
   </nav>
 </header>
@@ -113,10 +117,34 @@ $redisProfile = isset($_SESSION['username']) ? $redis->hGetAll("lego:user:" . $_
       <p><strong>Email :</strong> <?= h($redisProfile['email'] ?? '—') ?></p>
       <p><strong>Inscrit le :</strong> <?= h($redisProfile['created_at'] ?? '—') ?></p>
       <p><strong>Nombre de connexions (stocké dans Redis) :</strong> <?= h($redisProfile['logins'] ?? '1') ?></p>
+      <p><strong>Dernière connexion :</strong> <?= h($redisProfile['last_login'] ?? '—') ?></p>
+      
+      <h3 id="preferences-title" style="margin-top: 16px;">Préférences</h3>
+      <p><strong id="pref-lang-label">Langue :</strong> <span id="user-lang">Français</span></p>
+      <p><strong id="pref-theme-label">Thème :</strong> <span id="user-theme">Clair</span></p>
+      
       <form method="post" action="account.php" style="margin-top: 15px;">
         <button type="submit" name="action" value="logout">Se déconnecter</button>
       </form>
     </section>
+    
+    <script>
+      // Affichage des préférences utilisateur depuis le localStorage
+      document.addEventListener('DOMContentLoaded', function() {
+        const lang = localStorage.getItem('findbrick_lang') || 'fr';
+        const theme = localStorage.getItem('findbrick_theme') || 'light';
+        
+        const langDisplay = document.getElementById('user-lang');
+        const themeDisplay = document.getElementById('user-theme');
+        
+        if (langDisplay) {
+          langDisplay.textContent = lang === 'fr' ? 'Français' : 'English';
+        }
+        if (themeDisplay) {
+          themeDisplay.textContent = theme === 'light' ? 'Clair' : 'Sombre';
+        }
+      });
+    </script>
   <?php else: ?>
     <section class="card">
       <h2>Connexion</h2>
@@ -149,7 +177,7 @@ $redisProfile = isset($_SESSION['username']) ? $redis->hGetAll("lego:user:" . $_
   <?php endif; ?>
 </main>
 <footer>
-  <p id="footer-text">Crédits : FindBrick ©2025</p>
+  <p id="footer-text">Crédits : FindBrick ©2026</p>
 </footer>
 </body>
 </html>

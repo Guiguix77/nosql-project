@@ -27,7 +27,7 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
         <span class="sep">|</span>
         <a href="account.php"><?= isset($_SESSION['username']) ? '👤 ' . h($_SESSION['username']) : 'Mon Compte' ?></a>
         <span class="sep">|</span>
-        <a id="nav-credits" href="credits.php">Crédits</a>
+        <a id="nav-credits" href="credits.php"><strong>Crédits</strong></a>
         <div class="buttons">
           <button id="toggle-language" type="button">English</button>
           <button id="toggle-theme" type="button" aria-label="Toggle theme">🌞/🌙</button>
@@ -46,7 +46,8 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
       <br>
 
       <h3 id="credits-team-title">Équipe</h3>
-      <p id="credits-team-text">Réalisation : <strong>Guillaume MÉRIEUX</strong></p>
+      <p id="credits-team-text">Réalisation : <strong>Guillaume MÉRIEUX</strong>, <strong>Gael LEFEBVRE</strong></p>
+      <p>Encadrement : <strong>Enseignants du cours NoSQL/BAWE</strong></p>
       <br>
 
       <h3 id="credits-data-title">Données & images</h3>
@@ -75,7 +76,7 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
   </main>
 
   <footer>
-    <p id="footer-text">Crédits : FindBrick ©2025</p>
+    <p id="footer-text">Crédits : FindBrick ©2026</p>
   </footer>
 </body>
 
