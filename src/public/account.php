@@ -45,6 +45,7 @@ if ($action === 'register') {
     } else {
         $error = "Veuillez remplir tous les champs.";
     }
+
 } elseif ($action === 'login') {
     $username = trim((string)($_POST['username'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
@@ -57,14 +58,21 @@ if ($action === 'register') {
         $_SESSION['user_id']  = $user['id'];
         $_SESSION['username'] = $user['username'];
 
-        // Mise à jour du compteur de connexions et de la date dans Redis
+        // Synchronisation des infos PostgreSQL vers Redis + incrémentation des connexions
+        $redis->hMSet("lego:user:{$username}", [
+            'id'         => (string)$user['id'],
+            'username'   => (string)$user['username'],
+            'email'      => (string)$user['email'],
+            'created_at' => (string)$user['created_at'],
+            'last_login' => date('Y-m-d H:i:s')
+        ]);
         $redis->hIncrBy("lego:user:{$username}", 'logins', 1);
-        $redis->hSet("lego:user:{$username}", 'last_login', date('Y-m-d H:i:s'));
 
         $success = "Connexion réussie !";
     } else {
         $error = "Identifiants incorrects.";
     }
+
 } elseif ($action === 'logout') {
     session_destroy();
     header('Location: account.php');

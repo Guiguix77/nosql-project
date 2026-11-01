@@ -4,7 +4,7 @@ declare(strict_types=1);
 final class Connection
 {
     private static ?Connection $instance = null;
-    private PDO $pdo;
+    private ?PDO $pdo = null;
     private Redis $redis;
 
     public function __construct(array $config)
@@ -26,14 +26,17 @@ final class Connection
         $this->redis = new Redis();
         
         $redisConfig = $config['redis'];
+        $host    = $redisConfig['host'] ?? 'redis';
+        $port    = (int)($redisConfig['port'] ?? 6379);
+        $timeout = (float)($redisConfig['timeout'] ?? 2.5);
         $connected = false;
         
         // Try to connect with authentication if password is set
         if (!empty($redisConfig['password'])) {
             $connected = $this->redis->pconnect(
-                $redisConfig['host'],
-                $redisConfig['port'],
-                $redisConfig['timeout'],
+                $host,
+                $port,
+                $timeout,
                 null,
                 0,
                 0,
@@ -43,20 +46,12 @@ final class Connection
         
         // Fallback to connection without authentication
         if (!$connected) {
-            $connected = $this->redis->pconnect(
-                $redisConfig['host'],
-                $redisConfig['port'],
-                $redisConfig['timeout']
-            );
+            $connected = $this->redis->pconnect($host, $port, $timeout);
         }
         
         if (!$connected) {
             throw new RuntimeException('Failed to connect to Redis server');
         }
-        
-        // Set Redis options
-        $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
-        $this->redis->setOption(Redis::OPT_PERSISTENT, $redisConfig['persistent'] ?? true);
     }
 
     public static function get(): self
@@ -78,9 +73,7 @@ final class Connection
         return $this->redis;
     }
 
-    /**
-     * Close all connections (useful for testing)
-     */
+    // Close all connections (useful for testing)
     public function close(): void
     {
         $this->pdo = null;
