@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "nav-home": { fr: "Accueil", en: "Home" },
       "nav-credits": { fr: "Crédits", en: "Credits" },
       "footer-text": { fr: "Crédits : FindBrick ©2026", en: "Credits: FindBrick ©2026" },
-      "content": { fr: "Ce site web est réalisé dans le cadre du projet BAWE 2026.", en: "This website is made as part of the BAWE 2026 project." },
+      "content": { fr: "Ce site web est réalisé dans le cadre du projet BigData & NoSQL.", en: "This website is made as part of the BigData & NoSQL project." },
 
       // Index: recherche
       "search-set-title": { fr: "Recherche par numéro de set", en: "Search by set number" },
@@ -59,7 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
         en: "FindBrick — website built for the NoSQL / BAWE project. Goal: search and display LEGO sets with hybrid persistence (PostgreSQL & Redis)."
       },
       "credits-team-title": { fr: "Équipe", en: "Team" },
-      "credits-team-text": { fr: "Réalisation : Guillaume MÉRIEUX, Gael LEFEBVRE", en: "Built by: Guillaume MÉRIEUX, Gael LEFEBVRE" },
+      "credits-team-text": { 
+        fr: "Réalisation : <strong>Guillaume MÉRIEUX</strong>, <strong>Gaël ODDOS-MARCEL</strong>, <strong>Chloé AUREAU</strong>", 
+        en: "Built by: <strong>Guillaume MÉRIEUX</strong>, <strong>Gaël ODDOS-MARCEL</strong>, <strong>Chloé AUREAU</strong>" 
+      },
       "credits-data-title": { fr: "Données & images", en: "Data & Images" },
       "credits-data-text-1": {
         fr: 'Les informations de sets et certaines vignettes proviennent du site <a href="https://rebrickable.com/downloads/" target="_blank">Rebrickable</a>.',

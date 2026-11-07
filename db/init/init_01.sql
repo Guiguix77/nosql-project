@@ -53,3 +53,13 @@ COPY sets(set_num, name, year, theme_id, num_parts, img_url)
 FROM '/csv/sets.csv'
 DELIMITER ','
 CSV HEADER;
+
+--Insert du compte test
+INSERT INTO users (username, email, password)
+VALUES ('test', 'test@test.test', '$2y$10$Nn7whX7QSv0tk6koly0svOX2bcjT6zv0UEhLspWG0z43q8tQSQxRi')
+ON CONFLICT (username) DO NOTHING;
+
+--Insert de commentaires test
+INSERT INTO set_comments (set_num, username, comment) VALUES
+('10316-1', 'Guiguix77', 'Set incroyable, le rendu de Fondcombe est magnifique !'),
+('10316-1', 'test', 'Test de la double persistance PostgreSQL et Redis.');

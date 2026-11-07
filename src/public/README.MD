@@ -1,29 +1,60 @@
-# FindBrick
+# FindBrick — Projet BigData & NoSQL
+## Site réalisé par **Guillaume MÉRIEUX**, **Gaël ODDOS-MARCEL** et **Chloé AUREAU** dans le cadre du projet BigData & NoSQL.
+Application web de référencement de boîtes LEGO (28 627 sets) avec gestion des comptes utilisateurs et de commentaires.
+Les données saisies par l'utilisateur via les formulaires web sont persistées simultanément dans **PostgreSQL** et **Redis**, orchestrés via **Docker Compose**.
 
+- **Déploiement en ligne (Serveur hébergé) :** `http://<ip du serv de Gael>:8080`
 
+---
 
-#CREATION DE LA DATABASE ET DES TABLES
+## 1. Récupérer et lancer le projet (`git clone` & `docker compose up`)
 
-//Placez-vous dans le dossier /src/db/
-cd src/db/
+```bash
+git clone https://github.com/Guiguix77/nosql-project.git
+cd nosql-project
+docker compose up --build -d
+```
+## 2. Interagir avec l'interface Web
 
-//Pour créer la database et les tables , il faut exécuter le fichier execute.sql :
-sqlite3 sets.db < execute.sql
+Rendez-vous sur **http://localhost:8080** :
 
-//Pour vérifier que les tables ont bien été créées :
-sqlite3 sets.db ".tables"
+1. **Formulaire de Compte** (`http://localhost:8080/account.php`) :
 
-//Maintenant il faut insérer les données des fichiers CSV dans les tables :
-php import_csv_sql.php
+    - Connectez-vous avec le compte de démonstration (Pseudo : `test` / Mot de passe : `test`) ou créez un nouveau compte via le formulaire d'inscription.
 
+    - Double persistance : L'utilisateur est enregistré dans la table `users` de PostgreSQL et son profil + compteur de connexions sont persistés dans un Hash Redis (`lego:user:<username>`).
 
-#ALLEZ SUR LE SITE WEB
+2. **Formulaire de Commentaire** (`http://localhost:8080/research.php?set_num=10316-1`) :
 
-//Placez-vous désormais dans le dossier racine du projet
-cd ../..
+    - Recherchez un set LEGO (ex: `10316-1`) et ajoutez un commentaire via le formulaire.
 
-//Ouvrez un serveur PHP
-php -S localhost:8000
+    - Double persistance : Le commentaire est inséré dans la table `set_comments` de **PostgreSQL** et ajouté en JSON dans la liste **Redis** (`lego:comments:recent`) ainsi que dans le classement des sets les plus commentés (`lego:sets:most_commented`).
 
-//Ouvrez votre navigateur et taper dans la barre de recherche
-localhost:8000
+## 3. Se connecter aux deux systèmes de persistance (Les 2 Terminaux)
+
+Ouvrez deux terminaux pour vous connecter à chacun des systèmes de stockage et constater la persistance des données saisies :
+
+- **Terminal 1 : Connexion à PostgreSQL**
+```bash
+docker exec -it lego_postgres psql -U legouser -d legodb
+```
+Requêtes SQL pour constater la persistance :
+```sql
+SELECT * FROM set_comments;
+SELECT id, username, email, created_at FROM users;
+\q
+```
+(Ou en une seule ligne : `docker exec -it lego_postgres psql -U legouser -d legodb -c "SELECT * FROM set_comments;"`)
+
+- **Terminal 2 : Connexion à Redis**
+```bash
+docker exec -it lego_redis redis-cli
+```
+Commandes Redis pour constater la persistance :
+```bash
+LRANGE lego:comments:recent 0 -1
+ZREVRANGE lego:sets:most_commented 0 -1 WITHSCORES
+HGETALL lego:user:test
+exit
+```
+(Ou en une seule ligne : `docker exec -it lego_redis redis-cli LRANGE lego:comments:recent 0 -1`)

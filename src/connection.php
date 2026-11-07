@@ -52,6 +52,13 @@ final class Connection
         if (!$connected) {
             throw new RuntimeException('Failed to connect to Redis server');
         }
+
+        // Auto-synchronisation initiale : si Redis est vide au premier lancement,
+        // on charge les commentaires et utilisateurs existants de PostgreSQL vers Redis
+        if (!$this->redis->exists('lego:initialized')) {
+            $this->seedRedisFromPostgres();
+            $this->redis->set('lego:initialized', '1');
+        }
     }
 
     public static function get(): self
@@ -79,5 +86,40 @@ final class Connection
         $this->pdo = null;
         $this->redis->close();
         self::$instance = null;
+    }
+
+    private function seedRedisFromPostgres(): void
+    {
+        try {
+            // 1. Synchroniser les utilisateurs existants
+            $users = $this->pdo->query("SELECT id, username, email, created_at FROM users")->fetchAll();
+            foreach ($users as $u) {
+                $this->redis->hMSet("lego:user:{$u['username']}", [
+                    'id'         => (string)$u['id'],
+                    'username'   => (string)$u['username'],
+                    'email'      => (string)$u['email'],
+                    'created_at' => (string)$u['created_at'],
+                    'logins'     => '1'
+                ]);
+                $this->redis->lPush("lego:users:recent", (string)$u['username']);
+            }
+
+            // 2. Synchroniser les commentaires existants
+            $comments = $this->pdo->query("SELECT id, set_num, username, comment, created_at FROM set_comments ORDER BY id ASC")->fetchAll();
+            foreach ($comments as $c) {
+                $payload = json_encode([
+                    'id'         => $c['id'],
+                    'set_num'    => $c['set_num'],
+                    'username'   => $c['username'],
+                    'comment'    => $c['comment'],
+                    'created_at' => $c['created_at']
+                ], JSON_UNESCAPED_UNICODE);
+
+                $this->redis->lPush("lego:comments:recent", $payload);
+                $this->redis->zIncrBy("lego:sets:most_commented", 1, (string)$c['set_num']);
+            }
+        } catch (Throwable $e) {
+            // Ignore si les tables ne sont pas encore prêtes
+        }
     }
 }

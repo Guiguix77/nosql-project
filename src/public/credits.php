@@ -46,8 +46,7 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
       <br>
 
       <h3 id="credits-team-title">Équipe</h3>
-      <p id="credits-team-text">Réalisation : <strong>Guillaume MÉRIEUX</strong>, <strong>Gael LEFEBVRE</strong></p>
-      <p>Encadrement : <strong>Enseignants du cours NoSQL/BAWE</strong></p>
+      <p id="credits-team-text">Réalisation : <strong>Guillaume MÉRIEUX</strong>, <strong>Gaël ODDOS-MARCEL</strong>, <strong>Chloé AUREAU</strong></p>
       <br>
 
       <h3 id="credits-data-title">Données & images</h3>
