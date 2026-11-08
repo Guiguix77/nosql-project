@@ -3,7 +3,7 @@
 Application web de référencement de boîtes LEGO (28 627 sets) avec gestion des comptes utilisateurs et de commentaires.
 Les données saisies par l'utilisateur via les formulaires web sont persistées simultanément dans **PostgreSQL** et **Redis**, orchestrés via **Docker Compose**.
 
-- **Déploiement en ligne (Serveur hébergé) :** `https://oddosmarcelgael.fr`
+- **Déploiement en ligne (Serveur hébergé) :** `https://nosql.oddosmarcelgael.fr`
 ---
 
 ## 1. Récupérer et lancer le projet (`git clone` & `docker compose up`)
